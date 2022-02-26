@@ -9,8 +9,8 @@ public struct EurekaService {
     public init(serverUrl: String) {
         self.serverUrl = serverUrl
     }
-    
-    func register(instanceInfo: InstanceInfo, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+
+    public func register(instanceInfo: InstanceInfo, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let json = try instanceInfo.toJson()
 
         let data = json.toDictionary()
@@ -20,24 +20,24 @@ public struct EurekaService {
         return try dataTask(url: url!, httpMethod: "POST", httpBody: httpBody, completionHandler: completionHandler)
     }
 
-    func deregister(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func deregister(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let url = URL(string: "\(serverUrl)/eureka/apps/\(appId)/\(instanceId)")
         return try dataTask(url: url!, httpMethod: "DELETE", httpBody: nil, completionHandler: completionHandler)
     }
 
-    func findAll(completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func findAll(completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         return try find(appId: nil, instanceId: nil, completionHandler: completionHandler)
     }
 
-    func findByAppId(appId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func findByAppId(appId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         return try find(appId: appId, instanceId: nil, completionHandler: completionHandler)
     }
 
-    func findByAppIdAndInstanceId(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func findByAppIdAndInstanceId(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         return try find(appId: appId, instanceId: instanceId, completionHandler: completionHandler)
     }
 
-    func findByInstanceId(instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func findByInstanceId(instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         return try find(appId: nil, instanceId: instanceId, completionHandler: completionHandler)
     }
 
@@ -57,22 +57,22 @@ public struct EurekaService {
         return try dataTask(url: URL(string: url)!, httpMethod: "GET", httpBody: nil, completionHandler: completionHandler)
     }
 
-    func takeOutOfService(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func takeOutOfService(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let url = URL(string: "\(serverUrl)/eureka/apps/\(appId)/\(instanceId)/status?value=OUT_OF_SERVICE")
         return try dataTask(url: url!, httpMethod: "PUT", httpBody: nil, completionHandler: completionHandler)
     } 
 
-    func returnToService(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func returnToService(appId: String, instanceId: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let url = URL(string: "\(serverUrl)/eureka/apps/\(appId)/\(instanceId)/status?value=UP")
         return try dataTask(url: url!, httpMethod: "DELETE", httpBody: nil, completionHandler: completionHandler)
     } 
 
-    func matchVipAddress(vipAddress: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func matchVipAddress(vipAddress: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let url = URL(string: "\(serverUrl)/eureka/vips/\(vipAddress)")
         return try dataTask(url: url!, httpMethod: "GET", httpBody: nil, completionHandler: completionHandler)
     } 
 
-    func matchSecureVipAddress(secureVipAddress: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
+    public func matchSecureVipAddress(secureVipAddress: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let url = URL(string: "\(serverUrl)/eureka/svips/\(secureVipAddress)")
         return try dataTask(url: url!, httpMethod: "GET", httpBody: nil, completionHandler: completionHandler)
     } 
