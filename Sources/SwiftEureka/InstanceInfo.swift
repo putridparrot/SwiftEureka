@@ -15,35 +15,35 @@ public struct InstanceInfo: Codable {
     public static let defaultSecurePort: UInt = 7002
     public static let defaultCountryId: UInt = 1 // US
 
-    var instanceId: String?
-    var app: String?
-    var appGroupName: String?
-    var ipAddr: String?
-    var sid: String? = defaultSid
-    var port: Port? = Port(number: defaultPort, enabled: true)
-    var securePort: Port? = Port(number: defaultSecurePort, enabled: true)
-    var homePageUrl: String?
-    var statusPageUrl: String?
-    var healthCheckUrl: String?
-    var secureHealthCheckUrl: String?
-    var vipAddress: String?
-    var secureVipAddress: String?
-    var countryCode: UInt = defaultCountryId
-    var dataCenterInfo: DataCenterInfo? = DataCenterInfo()
-    var hostName: String?
-    var status: InstanceStatus? = InstanceStatus.up
-    var overriddenStatus: InstanceStatus? = InstanceStatus.unknown
-    var leaseInfo: LeaseInfo?
-    var isCoordinatingDiscoveryServer: Bool = false
-    var metadata: [String:String]?
-    var lastUpdatedTimestamp: UInt64?
-    var lastDirtyTimestamp: UInt64?
-    var actionType: ActionType?
-    var asgName: String?
+    public var instanceId: String?
+    public var app: String?
+    public var appGroupName: String?
+    public var ipAddr: String?
+    public var sid: String? = defaultSid
+    public var port: Port? = Port(number: defaultPort, enabled: true)
+    public var securePort: Port? = Port(number: defaultSecurePort, enabled: true)
+    public var homePageUrl: String?
+    public var statusPageUrl: String?
+    public var healthCheckUrl: String?
+    public var secureHealthCheckUrl: String?
+    public var vipAddress: String?
+    public var secureVipAddress: String?
+    public var countryCode: UInt = defaultCountryId
+    public var dataCenterInfo: DataCenterInfo? = DataCenterInfo()
+    public var hostName: String?
+    public var status: InstanceStatus? = InstanceStatus.up
+    public var overriddenStatus: InstanceStatus? = InstanceStatus.unknown
+    public var leaseInfo: LeaseInfo?
+    public var isCoordinatingDiscoveryServer: Bool = false
+    public var metadata: [String:String]?
+    public var lastUpdatedTimestamp: UInt64?
+    public var lastDirtyTimestamp: UInt64?
+    public var actionType: ActionType?
+    public var asgName: String?
 
-    var isSecurePortEnabled: Bool = false
-    var isUnsecurePortEnabled: Bool = true
+    public var isSecurePortEnabled: Bool = false
+    public var isUnsecurePortEnabled: Bool = true
 
-    init() {        
+    public init() {        
     }    
 }
