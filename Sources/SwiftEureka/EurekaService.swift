@@ -6,6 +6,10 @@ import FoundationNetworking
 public struct EurekaService {
     let serverUrl: String
 
+    public init(serverUrl: String) {
+        self.serverUrl = serverUrl
+    }
+    
     func register(instanceInfo: InstanceInfo, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
         let json = try instanceInfo.toJson()
 
