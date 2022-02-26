@@ -10,7 +10,7 @@ public extension InstanceInfo {
         var instance: InstanceInfo
     }
 
-    public func toJson() throws -> String {
+    func toJson() throws -> String {
         let encoder = JSONEncoder();
         encoder.outputFormatting = .withoutEscapingSlashes
         let jsonData = try encoder.encode(RequestWrapper(instance: cloneAndInitialize(self)))
