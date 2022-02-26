@@ -1,3 +1,3 @@
-struct LeaseInfo: Codable {
+public struct LeaseInfo: Codable {
     var evictionDurationInSecs: UInt?
 }

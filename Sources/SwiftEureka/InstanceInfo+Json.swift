@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-extension InstanceInfo {
+public extension InstanceInfo {
 
     // wraps the InstanceInfo into a Json Object
     struct RequestWrapper: Codable {

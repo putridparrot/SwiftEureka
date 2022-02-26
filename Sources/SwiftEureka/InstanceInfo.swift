@@ -7,7 +7,7 @@ import FoundationNetworking
 // https://github.com/Netflix/eureka/blob/master/eureka-client/src/main/java/com/netflix/appinfo/InstanceInfo.java
 // https://github.com/Netflix/eureka/wiki/Eureka-REST-operations
 
-struct InstanceInfo: Codable {
+public struct InstanceInfo: Codable {
     public static let defaultStatusPageUrl = "/status"
     public static let defaultHealthPageUrl = "/healthckeck"
     public static let defaultSid: String = "na"

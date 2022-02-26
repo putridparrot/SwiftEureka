@@ -1,4 +1,4 @@
-enum InstanceStatus: String, Codable {
+public enum InstanceStatus: String, Codable {
     case up = "UP"
     case down = "DOWN"
     case starting = "STARTING"

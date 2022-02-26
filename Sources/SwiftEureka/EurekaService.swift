@@ -3,7 +3,7 @@ import Foundation
 import FoundationNetworking
 #endif
 
-struct EurekaService {
+public struct EurekaService {
     let serverUrl: String
 
     func register(instanceInfo: InstanceInfo, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) throws -> URLSessionDataTask {
