@@ -28,22 +28,31 @@ public struct InstanceInfo: Codable {
     public var secureHealthCheckUrl: String?
     public var vipAddress: String?
     public var secureVipAddress: String?
-    public var countryCode: UInt = defaultCountryId
+    public var countryId: UInt? = defaultCountryId
     public var dataCenterInfo: DataCenterInfo? = DataCenterInfo()
     public var hostName: String?
     public var status: InstanceStatus? = InstanceStatus.up
     public var overriddenStatus: InstanceStatus? = InstanceStatus.unknown
-    public var leaseInfo: LeaseInfo?
-    public var isCoordinatingDiscoveryServer: Bool = false
+    public var leaseInfo: LeaseInfo?    
+    public var isCoordinatingDiscoveryServer: Bool? = false
     public var metadata: [String:String]?
     public var lastUpdatedTimestamp: UInt64?
     public var lastDirtyTimestamp: UInt64?
     public var actionType: ActionType?
     public var asgName: String?
-
-    public var isSecurePortEnabled: Bool = false
-    public var isUnsecurePortEnabled: Bool = true
+    public var isSecurePortEnabled: Bool? = false
+    public var isUnsecurePortEnabled: Bool? = true
 
     public init() {        
     }    
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let stringValue = try container.decode(String.self, forKey: .isCoordinatingDiscoveryServer)
+        switch stringValue {
+            case "true": isCoordinatingDiscoveryServer = true
+            default: isCoordinatingDiscoveryServer = false
+        }
+    }
+
 }

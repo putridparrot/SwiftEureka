@@ -4,7 +4,7 @@ Swift library for working with netflix/spring Eureka
 
 The following examples use _completion handlers_.
 
-Sample of creating an InstanceInfo and using the EurekaService to register the instance with Eureka
+Sample of creating an InstanceInfo and using the EurekaClient to register the instance with Eureka
 
 ```swift
 var instance = InstanceInfo()
@@ -20,7 +20,7 @@ instance.healthCheckUrl = "http://myservice:8080/healthcheck"
 instance.statusPageUrl = "http://myservice:8080/status"
 instance.homePageUrl = "http://myservice:8080"
 
-let svc = EurekaService(serverUrl: "http://192.168.1.1:8761")
+let svc = EurekaClient(serverUrl: "http://192.168.1.1:8761")
 
 try svc.register(instanceInfo: instance) { (data, response, error) in
     let result = String.init(data: data!, encoding: .utf8)

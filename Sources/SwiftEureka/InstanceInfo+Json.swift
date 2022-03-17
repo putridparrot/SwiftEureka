@@ -34,7 +34,7 @@ public extension InstanceInfo {
         clone.secureHealthCheckUrl = instance.secureHealthCheckUrl
         clone.vipAddress = instance.vipAddress
         clone.secureVipAddress = instance.secureVipAddress
-        clone.countryCode = instance.countryCode
+        clone.countryId = instance.countryId
         clone.dataCenterInfo = instance.dataCenterInfo
         clone.hostName = instance.hostName
         clone.status = instance.status
