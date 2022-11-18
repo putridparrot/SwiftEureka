@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        swift: ["5.7.1"]
+        swift: ["5.7.x"]
     runs-on: ${{ matrix.os }}
 
     steps:
