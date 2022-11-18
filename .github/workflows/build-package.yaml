@@ -22,6 +22,8 @@ jobs:
       #    swift-version: ${{ matrix.swift }}
 
       - uses: actions/checkout@v2
+      - name: Get swift version
+        run: swift --version
       - name: Build
         run: swift build
       - name: Run tests
