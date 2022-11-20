@@ -27,6 +27,13 @@ let package = Package(
             ]),
         .testTarget(
             name: "SwiftEurekaTests",
-            dependencies: ["SwiftEureka"]),
+            dependencies: ["SwiftEureka"],
+            resources: [
+                .process("findAll.json"),
+                .process("findByAppId.json"),
+                .process("findByAppIdInstanceId.json"),
+                .process("findByInstanceId.json"),
+                .process("findBySecureVipAddress.json"),
+            ]),
     ]
 )

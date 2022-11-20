@@ -186,7 +186,6 @@ public struct EurekaClient {
         switch result {
             case .success(let data): 
                 do {
-                    logResponse(data: data!)
                     let wrapper = try JSONDecoder().decode(ApplicationsWrapper.self, from: data!)
                     return wrapper.applications
                 } catch {
@@ -267,16 +266,16 @@ public struct EurekaClient {
 
                 let resp = response as! HTTPURLResponse
                 let status = resp.statusCode
-                guard (200...299).contains(status) else {
+                
+                logger?.debug("Response: Status code \(status)")
+
+                guard (200...299).contains(status) else {                    
                     continuation.resume(returning: .failure(HTTPError.httpError(status)))
                     return
                 }
 
-                logger?.debug("Response: \(response!)")
-
                 if let data = data {
-                    let d = String.init(data: data, encoding: .utf8)
-                    logger?.debug("Data: \(d!)")
+                    logger?.debug("Response: \(String.init(data: data, encoding: .utf8) ?? "")")
                 }
 
                 continuation.resume(returning: .success(data))
@@ -285,10 +284,10 @@ public struct EurekaClient {
     }
 
     // for debug purposes
-    private func logResponse(data: Data) {
-        if let json = String(data: data, encoding: .utf8) {
-            print("JSON Result")
-            print("'\(json)'")
-        }
-    }
+    // private func logResponse(data: Data) {
+    //     if let json = String(data: data, encoding: .utf8) {
+    //         print("JSON Result")
+    //         print("'\(json)'")
+    //     }
+    // }
 }
