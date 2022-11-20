@@ -5,19 +5,27 @@ import FoundationNetworking
 
 import Logging
 
-public struct Application: Decodable {
-    public let name: String
-    public let instance: [InstanceInfo]
+internal struct ApplicationsWrapper: Codable {
+    public let applications: Applications
 }
 
-public struct Applications: Decodable {
+public struct Applications: Codable {
     public let versions__delta: String
     public let apps__hashcode: String
     public let application: [Application]
 }
 
-private struct ApplicationsWrapper: Decodable {
-    public let applications: Applications
+public struct Application: Codable {
+    public let name: String
+    public let instance: [InstanceInfo]
+}
+
+internal struct ApplicationWrapper: Codable {
+    public let application: Application
+}
+
+internal struct InstanceWrapper: Codable {
+    public let instance: InstanceInfo
 }
 
 public enum HTTPError: Error {
@@ -26,15 +34,19 @@ public enum HTTPError: Error {
 }
 
 public struct EurekaClient {
+    private let rootUrl = "eureka"
+
+    private let session: URLSession;
     private let baseUrl: URL
-    private let logger: Logger
+    private let logger: Logger?
 
     /// Initialize an instance of the Eureka client
     /// 
-    /// - Parameter baseUrl: The base URL, including port of the server
-    public init(baseUrl: URL) {
+    /// - Parameter baseUrl: The base URL, including the port of the server
+    public init(baseUrl: URL, logger: Logger? = nil, session: URLSession = .shared) {
         self.baseUrl = baseUrl
-        self.logger = Logger(label: "com.putridparrot.EurekaService")
+        self.logger = logger
+        self.session = session
     }
 
     /// Register an instance with the Eureka server
@@ -46,7 +58,7 @@ public struct EurekaClient {
         let request = json.toDictionary()
         let httpBody = try JSONSerialization.data(withJSONObject: request!, options: [])
 
-        let url = URL(string: "\(baseUrl)/eureka/apps/\(instanceInfo.app!)")
+        let url = URL(string: "\(baseUrl)/\(rootUrl)/apps/\(instanceInfo.app!)")
         let result = await dataTask(url: url!, httpMethod: "POST", httpBody: httpBody)
         if case .failure(let error) = result  {
             throw error            
@@ -60,37 +72,61 @@ public struct EurekaClient {
     ///   - instanceId: The instance id of the service
     /// - Returns: Void
     public func unregister(appId: String, instanceId: String) async throws -> Void {
-        let url = URL(string: "\(baseUrl)/eureka/apps/\(appId)/\(instanceId)")
+        let url = URL(string: "\(baseUrl)/\(rootUrl)/apps/\(appId)/\(instanceId)")
         let result = await dataTask(url: url!, httpMethod: "DELETE", httpBody: nil)
         if case .failure(let error) = result  {
             throw error
         }
     }
 
+    /// Sends an application instance heartbeat
+    /// - Parameters:
+    ///   - appId: 
+    ///   - instanceId: 
+    /// - Returns: 
+    public func sendHeartBeat(appId: String, instanceId: String) async throws -> Void {
+        let url = URL(string: "\(baseUrl)/\(rootUrl)/apps/\(appId)/\(instanceId)")
+        let result = await dataTask(url: url!, httpMethod: "PUT", httpBody: nil)
+        switch result {
+            case .success: 
+                return
+            case .failure(let error): throw error
+        }
+    }
+
     /// Find all instances registered with the Eureka Server
     /// 
     /// - Returns: 
-    public func findAll() async -> Result<Applications?, Error> {
-        let result = await findBy(appId: nil, instanceId: nil)
+    public func findAll() async throws -> Applications? {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/apps", httpMethod: "GET")
         switch result {
             case .success(let data): 
                 do {
                     let wrapper = try JSONDecoder().decode(ApplicationsWrapper.self, from: data!)
-                    return .success(wrapper.applications)
+                    return wrapper.applications
                 } catch {
-                    return .failure(error)
+                    throw error
                 }
-            case .failure(let error): return .failure(error)
+            case .failure(let error): throw error
         }
-        // return await findBy(appId: nil, instanceId: nil)
     }
 
     /// Find instance by app id
     /// 
     /// - Parameter appId: 
     /// - Returns: 
-    public func find(appId: String) async -> Result<Data?, Error> {
-        return await findBy(appId: appId, instanceId: nil)
+    public func find(appId: String) async throws -> Application? {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/apps/\(appId)", httpMethod: "GET")
+        switch result {
+            case .success(let data): 
+                do {
+                    let wrapper = try JSONDecoder().decode(ApplicationWrapper.self, from: data!)
+                    return wrapper.application;
+                } catch {
+                    throw error
+                }
+            case .failure(let error): throw error
+        }
     }
 
     /// Find instance by app id and instance id
@@ -99,53 +135,110 @@ public struct EurekaClient {
     ///   - appId: 
     ///   - instanceId: 
     /// - Returns: 
-    public func find(appId: String, instanceId: String) async -> Result<Data?, Error> {
-        return await findBy(appId: appId, instanceId: instanceId)
+    public func find(appId: String, instanceId: String) async throws -> InstanceInfo? {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/apps/\(appId)/\(instanceId)", httpMethod: "GET")
+        switch result {
+            case .success(let data): 
+                do {
+                    let wrapper = try JSONDecoder().decode(InstanceWrapper.self, from: data!)
+                    return wrapper.instance;
+                } catch {
+                    throw error
+                }
+            case .failure(let error): throw error
+        }
     }
 
     /// Find instance by instance id
     /// 
     /// - Parameter instanceId: 
     /// - Returns: 
-    public func find(instanceId: String) async -> Result<Data?, Error> {
-        return await findBy(appId: nil, instanceId: instanceId)
-    }
-
-    private func findBy(appId: String?, instanceId: String?) async -> Result<Data?, Error> {
-        var url: String
-        if appId == nil && instanceId != nil {
-            url = "\(baseUrl)/eureka/instances/\(instanceId!)"
-        } else {
-            url = "\(baseUrl)/eureka/apps"
-            if appId != nil {
-                url = "\(url)/\(appId!)"
-                if instanceId != nil {
-                    url = "\(url)/\(appId!)/\(instanceId!)"
+    public func find(instanceId: String) async throws -> InstanceInfo? {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/instances/\(instanceId)", httpMethod: "GET")
+        switch result {
+            case .success(let data): 
+                do {
+                    let wrapper = try JSONDecoder().decode(InstanceWrapper.self, from: data!)
+                    return wrapper.instance;
+                } catch {
+                    throw error
                 }
-            }
-        }        
-        return await dataTask(url: URL(string: url)!, httpMethod: "GET", httpBody: nil)
+            case .failure(let error): throw error
+        }
     }
 
-    public func takeOutOfService(appId: String, instanceId: String) async -> Result<Data?, Error> {
-        let url = URL(string: "\(baseUrl)/eureka/apps/\(appId)/\(instanceId)/status?value=OUT_OF_SERVICE")
-        return await dataTask(url: url!, httpMethod: "PUT", httpBody: nil)
+    public func find(vipAddress: String) async throws -> Applications? {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/vips/\(vipAddress)", httpMethod: "GET")
+        switch result {
+            case .success(let data): 
+                do {
+                    let wrapper = try JSONDecoder().decode(ApplicationsWrapper.self, from: data!)
+                    return wrapper.applications
+                } catch {
+                    throw error
+                }
+            case .failure(let error): throw error
+        }
     } 
 
-    public func returnToService(appId: String, instanceId: String) async -> Result<Data?, Error> {
-        let url = URL(string: "\(baseUrl)/eureka/apps/\(appId)/\(instanceId)/status?value=UP")
-        return await dataTask(url: url!, httpMethod: "DELETE", httpBody: nil)
+    public func find(secureVipAddress: String) async throws -> Applications? {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/svips/\(secureVipAddress)", httpMethod: "GET")
+        switch result {
+            case .success(let data): 
+                do {
+                    logResponse(data: data!)
+                    let wrapper = try JSONDecoder().decode(ApplicationsWrapper.self, from: data!)
+                    return wrapper.applications
+                } catch {
+                    throw error
+                }
+            case .failure(let error): throw error
+        }
     } 
 
-    public func matchVipAddress(vipAddress: String) async -> Result<Data?, Error> {
-        let url = URL(string: "\(baseUrl)/eureka/vips/\(vipAddress)")
-        return await dataTask(url: url!, httpMethod: "GET", httpBody: nil)
+    /// Update meta data for the application/instance
+    /// - Parameters:
+    ///   - appId: 
+    ///   - instanceId: 
+    ///   - key: 
+    ///   - value: 
+    /// - Returns: 
+    public func updateMeta(appId: String, instanceId: String, key: String, value: String) async throws -> Void {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/apps/\(appId)/\(instanceId)/metadata?\(key)=\(value)", httpMethod: "PUT")
+        if case .failure(let error) = result  {
+            throw error
+        }
     } 
 
-    public func matchSecureVipAddress(secureVipAddress: String) async -> Result<Data?, Error> {
-        let url = URL(string: "\(baseUrl)/eureka/svips/\(secureVipAddress)")
-        return await dataTask(url: url!, httpMethod: "GET", httpBody: nil)
+    /// Mark the service as "Out of Service"
+    /// - Parameters:
+    ///   - appId: 
+    ///   - instanceId: 
+    /// - Returns: 
+    public func takeOutOfService(appId: String, instanceId: String) async throws -> Void {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/apps/\(appId)/\(instanceId)/status?value=OUT_OF_SERVICE", httpMethod: "PUT")
+        if case .failure(let error) = result  {
+            throw error
+        }
     } 
+
+    /// Mark service as UP/return to service
+    /// - Parameters:
+    ///   - appId: 
+    ///   - instanceId: 
+    /// - Returns: 
+    public func moveInstanceIntoService(appId: String, instanceId: String) async throws -> Void {
+        let result = await serviceCall(url: "\(baseUrl)/\(rootUrl)/apps/\(appId)/\(instanceId)/status?value=UP", httpMethod: "DELETE")
+        if case .failure(let error) = result  {
+            throw error
+        }
+    } 
+
+    private func serviceCall(url: String, httpMethod: String) async -> Result<Data?, Error> {
+        logger?.debug("HttpMethod: \(httpMethod), URL: \(url)")
+        print("HttpMethod: \(httpMethod), URL: \(url)")
+        return await dataTask(url: URL(string: url)!, httpMethod: httpMethod, httpBody: nil)
+    }
 
     private func dataTask(url: URL, httpMethod: String, httpBody: Data?) async -> Result<Data?, Error> {
         var request = URLRequest(url: url)
@@ -163,12 +256,12 @@ public struct EurekaClient {
 
     private func dataTask(with request: URLRequest) async -> Result<Data?, Error> {
         await withCheckedContinuation { continuation in
-            logger.info("Request: \(request)")
+            logger?.debug("Request: \(request)")
 
-            URLSession.shared.dataTask(with: request) { data, response, error in
+            session.dataTask(with: request) { data, response, error in
                 if let error = error {
                     continuation.resume(returning: .failure(HTTPError.transportError(error)))
-                    logger.error("\(error)")
+                    logger?.error("\(error)")
                     return
                 }
 
@@ -179,15 +272,23 @@ public struct EurekaClient {
                     return
                 }
 
-                logger.info("Response: \(response!)")
+                logger?.debug("Response: \(response!)")
 
                 if let data = data {
                     let d = String.init(data: data, encoding: .utf8)
-                    logger.debug("Data: \(d!)")
+                    logger?.debug("Data: \(d!)")
                 }
 
                 continuation.resume(returning: .success(data))
             }.resume()
+        }
+    }
+
+    // for debug purposes
+    private func logResponse(data: Data) {
+        if let json = String(data: data, encoding: .utf8) {
+            print("JSON Result")
+            print("'\(json)'")
         }
     }
 }

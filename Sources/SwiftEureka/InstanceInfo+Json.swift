@@ -23,15 +23,16 @@ public extension InstanceInfo {
     /// - Returns: 
     private func cloneAndInitialize(_ instance: InstanceInfo) -> InstanceInfo {
         var clone = InstanceInfo()
-        clone.instanceId = instance.instanceId
-        clone.sid = instance.sid ?? InstanceInfo.defaultSid
+        //clone.instanceId = instance.instanceId
+        //clone.sid = instance.sid ?? InstanceInfo.defaultSid
         clone.app = instance.app
         clone.ipAddr = instance.ipAddr
         clone.port = instance.port
         clone.securePort = instance.securePort
         clone.homePageUrl = instance.homePageUrl
         clone.statusPageUrl = instance.statusPageUrl
-        clone.secureHealthCheckUrl = instance.secureHealthCheckUrl
+        clone.healthCheckUrl = instance.healthCheckUrl
+        //clone.secureHealthCheckUrl = instance.secureHealthCheckUrl
         clone.vipAddress = instance.vipAddress
         clone.secureVipAddress = instance.secureVipAddress
         clone.countryId = instance.countryId
@@ -44,7 +45,7 @@ public extension InstanceInfo {
         // TBC clone.lastUpdatedTimestamp = 
         // TBC clone.lastDirtyTimestamp = 
         clone.actionType = instance.actionType
-        clone.asgName = instance.asgName
+        //clone.asgName = instance.asgName
         clone.metadata = instance.metadata == nil || instance.metadata!.count == 0 ? ["@class": "java.util.Collections$EmptyMap"] : instance.metadata
 
         return clone

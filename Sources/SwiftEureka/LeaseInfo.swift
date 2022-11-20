@@ -1,7 +1,8 @@
 public struct LeaseInfo: Codable {
-    var evictionDurationInSecs: UInt?
-
-    public init(evictionDurationInSecs: UInt?) {
-        self.evictionDurationInSecs = evictionDurationInSecs
-    }
+    public var renewalIntervalInSecs: UInt?
+    public var durationInSecs: UInt?
+    public var registrationTimestamp: UInt?
+    public var lastRenewalTimestamp: UInt?
+    public var evictionTimestamp: UInt?
+    public var serviceUpTimestamp: UInt?
 }

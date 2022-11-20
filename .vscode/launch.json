@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug SwiftEureka",
+            "program": "${workspaceFolder:SwiftEureka}/.build/debug/SwiftEureka",
+            "args": [],
+            "cwd": "${workspaceFolder:SwiftEureka}",
+            "preLaunchTask": "swift: Build Debug SwiftEureka"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release SwiftEureka",
+            "program": "${workspaceFolder:SwiftEureka}/.build/release/SwiftEureka",
+            "args": [],
+            "cwd": "${workspaceFolder:SwiftEureka}",
+            "preLaunchTask": "swift: Build Release SwiftEureka"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Test SwiftEureka",
+            "program": "${workspaceFolder:SwiftEureka}/.build/debug/SwiftEurekaPackageTests.xctest",
+            "cwd": "${workspaceFolder:SwiftEureka}",
+            "preLaunchTask": "swift: Build All"
+        }
+    ]
+}

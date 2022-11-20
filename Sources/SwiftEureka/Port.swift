@@ -18,5 +18,12 @@ public struct Port: Codable {
             case "true": enabled = true
             default: enabled = false
         }
+
+        do {
+            number = try container.decode(UInt.self, forKey: .number)
+        } catch DecodingError.typeMismatch {
+            let tmp = try container.decode(String?.self, forKey: .number)            
+            number = tmp != nil ? UInt(tmp!) ?? 0 : 0
+        }
     }
 }
