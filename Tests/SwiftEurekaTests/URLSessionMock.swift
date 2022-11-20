@@ -23,7 +23,6 @@ class URLSessionMock: URLSession {
         case unknown
     }
 
-
     init(jsonFileName: String) {
         self.jsonFileName = jsonFileName        
         super.init(configuration: URLSessionConfiguration.default)
