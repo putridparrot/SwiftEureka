@@ -235,7 +235,6 @@ public struct EurekaClient {
 
     private func serviceCall(url: String, httpMethod: String) async -> Result<Data?, Error> {
         logger?.debug("HttpMethod: \(httpMethod), URL: \(url)")
-        print("HttpMethod: \(httpMethod), URL: \(url)")
         return await dataTask(url: URL(string: url)!, httpMethod: httpMethod, httpBody: nil)
     }
 
