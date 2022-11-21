@@ -26,7 +26,7 @@ class URLSessionMock: URLSession {
 
     init(jsonFileName: String) {
         self.jsonFileName = jsonFileName
-        //super.init(configuration: URLSessionConfiguration.default)
+        super.init()
     }
 
     override func dataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
