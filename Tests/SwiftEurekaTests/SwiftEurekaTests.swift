@@ -3,6 +3,7 @@ import class Foundation.Bundle
 
 @testable import SwiftEureka
 
+@available(iOS 13.0.0, *)
 final class SwiftEurekaTests: XCTestCase {
     func testDeserialiseApplicationsResponse() throws {
         // guard #available(macOS 10.13, *) else {
