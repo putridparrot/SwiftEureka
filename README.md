@@ -1,5 +1,11 @@
 # SwiftEureka
 
+[![Build Package](https://github.com/putridparrot/SwiftEureka/actions/workflows/build-package.yaml/badge.svg)](https://github.com/putridparrot/SwiftEureka/actions/workflows/build-package.yaml)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/putridparrot/SwiftEureka/blob/master/LICENSE.md)
+[![GitHub Releases](https://img.shields.io/github/release/putridparrot/SwiftEureka.svg)](https://github.com/putridparrot/SwiftEureka/releases)
+[![GitHub Issues](https://img.shields.io/github/issues/putridparrot/SwiftEureka.svg)](https://github.com/putridparrot/SwiftEureka/issues)
+
+
 Swift library for working with netflix/spring Eureka
 
 This is, by design, a simple Eureka Client package. Polling of the server is not implemented, nor is caching etc.
