@@ -5,6 +5,8 @@
 [![GitHub Releases](https://img.shields.io/github/release/putridparrot/SwiftEureka.svg)](https://github.com/putridparrot/SwiftEureka/releases)
 [![GitHub Issues](https://img.shields.io/github/issues/putridparrot/SwiftEureka.svg)](https://github.com/putridparrot/SwiftEureka/issues)
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fputridparrot%2FSwiftEureka%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/putridparrot/SwiftEureka) 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fputridparrot%2FSwiftEureka%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/putridparrot/SwiftEureka)
 
 Swift library for working with netflix/spring Eureka
 
